@@ -65,4 +65,5 @@ if __name__ == "__main__":
     with napari.gui_qt():
 
         viewer = napari.view_image(stack_img)
+        # viewer.add_image(stack_masks, channel_axis=2, colormap=['red', 'green', 'blue'])
         viewer.add_image(stack_masks)
