@@ -17,6 +17,8 @@ def get_train_val_loaders(
     summary_data_filepath: Path,
     train_transforms: Callable,
     val_transforms: Callable,
+    train_preprocessing: Callable,
+    val_preprocessing: Callable,
     train_ratio: float = 0.8,
     batch_size: int = 16,
     num_workers: int = 8,
@@ -32,10 +34,10 @@ def get_train_val_loaders(
     val_image_ids = image_ids[int(train_ratio * len(image_ids)):]
     train_ds = SatelliteSegmentationDataset(
         image_dir, mask_dir, image_id_list=train_image_ids,
-        transform=train_transforms)
+        transform=train_transforms, preprocessing=train_preprocessing)
     val_ds = SatelliteSegmentationDataset(
         image_dir, mask_dir, image_id_list=val_image_ids,
-        transform=val_transforms)
+        transform=val_transforms, preprocessing=val_preprocessing)
 
     if limit_train_num_samples is not None:
         np.random.seed(limit_train_num_samples)

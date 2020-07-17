@@ -7,12 +7,13 @@ from fastcore.utils import *
 import numpy as np
 
 class SatelliteSegmentationDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, image_id_list, transform=None):
+    def __init__(self, image_dir, mask_dir, image_id_list, transform=None,preprocessing=None):
         super().__init__()
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.image_id_list = image_id_list
         self.transform = transform
+        self.preprocessing = preprocessing
 
     def __getitem__(self, index):
         image_id = self.image_id_list[index]
@@ -23,12 +24,17 @@ class SatelliteSegmentationDataset(Dataset):
         img = (img - img.min())/(img.max() - img.min())#.astype(np.float32)
         mask = np.asarray(Image.open(mask_filepath))
 
-        sample = {"image": img, "mask": mask}
+
         if self.transform:
             augmentation = self.transform(image=img, mask=mask)
-            img_aug = augmentation['image']
-            mask_aug = augmentation['mask']
-            sample = {"image": img_aug, "mask": mask_aug}
+            img = augmentation['image']
+            mask = augmentation['mask']
+        # apply preprocessing for smp
+        if self.preprocessing:
+            preprocesed = self.preprocessing(image=img, mask=mask)
+            img, mask = preprocesed['image'], preprocesed['mask']
+
+        sample = {"image": img, "mask": mask}
         return sample
 
     def __len__(self):

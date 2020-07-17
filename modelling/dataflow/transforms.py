@@ -3,29 +3,38 @@ import random
 import cv2
 from matplotlib import pyplot as plt
 
-import albumentations as A
+import albumentations as albu
 from albumentations.pytorch.transforms import ToTensorV2
 
-def albumentations_transforms():
-    transform = A.Compose([
+def get_train_augmentation():
+    transform = albu.Compose([
         # A.ToFloat(max_value=65535.0),
-        A.ToFloat(max_value=1.0),
-        A.RandomSizedCrop(min_max_height=(512, 512), width=256, height=256),
-        A.RandomRotate90(),
-        A.Flip(),
-        A.OneOf([
-            A.MotionBlur(p=0.2),
-            A.MedianBlur(blur_limit=3, p=0.1),
-            A.Blur(blur_limit=3, p=0.1),
+        albu.ToFloat(max_value=1.0),
+        albu.RandomSizedCrop(min_max_height=(512, 512), width=256, height=256),
+        albu.Rotate(),
+        albu.Flip(),
+        albu.OneOf([
+            albu.MotionBlur(p=0.2),
+            albu.MedianBlur(blur_limit=3, p=0.1),
+            albu.Blur(blur_limit=3, p=0.1),
         ], p=0.2),
-        A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.2, rotate_limit=45, p=0.2),
-        A.OneOf([
-            A.OpticalDistortion(p=0.3),
-            A.GridDistortion(p=0.1),
+        albu.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.2, rotate_limit=45, p=0.2),
+        albu.OneOf([
+            albu.OpticalDistortion(p=0.3),
+            albu.GridDistortion(p=0.1),
         ], p=0.2),
-        A.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=0.1, val_shift_limit=0.1, p=0.3),
+        albu.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=0.1, val_shift_limit=0.1, p=0.3),
         # A.Normalize(),
         ToTensorV2(),
     ])
     return transform
+
+def get_validation_augmentation():
+    """Add paddings to make image shape divisible by 32"""
+    test_transform = [
+        albu.ToFloat(max_value=1.0),
+        albu.RandomSizedCrop(min_max_height=(512, 512), width=256, height=256),
+        ToTensorV2(),
+    ]
+    return albu.Compose(test_transform)
 
