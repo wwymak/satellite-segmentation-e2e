@@ -8,7 +8,7 @@ from torch.utils.data.dataset import Subset, ConcatDataset
 
 import ignite.distributed as idist
 
-from datasets import SatelliteSegmentationDataset
+from dataflow.datasets import SatelliteSegmentationDataset
 
 
 def get_train_val_loaders(
@@ -17,8 +17,8 @@ def get_train_val_loaders(
     summary_data_filepath: Path,
     train_transforms: Callable,
     val_transforms: Callable,
-    train_preprocessing: Callable,
-    val_preprocessing: Callable,
+    train_preprocessing: Optional[Callable] = None,
+    val_preprocessing: Optional[Callable] = None,
     train_ratio: float = 0.8,
     batch_size: int = 16,
     num_workers: int = 8,
