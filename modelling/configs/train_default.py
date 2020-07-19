@@ -97,7 +97,7 @@ num_epochs = 100
 
 criterion = smp.utils.losses.DiceLoss()
 
-lr = 0.01
+lr = 3e-4
 weight_decay = 5e-4
 momentum = 0.9
 nesterov = False
@@ -115,7 +115,7 @@ optimizer = optim.Adam(
         {"params": model.decoder.parameters(), "lr": lr / 10},
         {"params": model.segmentation_head.parameters(), "lr": lr},
     ],
-    lr=5e-4,
+    lr=lr,
 )
 
 le = len(train_loader)

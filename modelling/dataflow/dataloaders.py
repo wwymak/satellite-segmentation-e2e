@@ -1,4 +1,5 @@
 from typing import Callable, Optional, Tuple, Union
+
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -24,9 +25,14 @@ def get_train_val_loaders(
     num_workers: int = 8,
     limit_train_num_samples: Optional[int] = None,
     limit_val_num_samples: Optional[int] = None,
+    drop_empty_images: Optional[bool] = True
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
 
     summary_data_df = pd.read_csv(summary_data_filepath)
+    print(summary_data_df.shape)
+    if drop_empty_images:
+        summary_data_df = summary_data_df[summary_data_df.PolygonWKT_Geo != "POLYGON EMPTY"]
+    print(summary_data_df.shape)
     image_ids = summary_data_df.ImageId.unique()
     np.random.shuffle(image_ids)
 

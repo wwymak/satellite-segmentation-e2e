@@ -52,7 +52,7 @@ def denormalize(t, mean, std, max_pixel_value=255):
 
 def prepare_batch_fp32(batch, device, non_blocking):
     x, y = batch["image"], batch["mask"]
-    x = convert_tensor(x, device, non_blocking=non_blocking)
-    y = convert_tensor(y, device, non_blocking=non_blocking).long()
+    x = x.to(device, non_blocking=non_blocking)
+    y = y.to(device, non_blocking=non_blocking).long()
     return x, y
 

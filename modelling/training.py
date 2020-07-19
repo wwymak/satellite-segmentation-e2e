@@ -161,7 +161,7 @@ def training(local_rank, config, logger=None):
     # if not getattr(config, "use_fp16", True):
     #     raise RuntimeError("This training script uses by default fp16 AMP")
 
-    # torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.benchmark = True
 
     set_seed(config.seed + local_rank)
 
