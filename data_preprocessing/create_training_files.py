@@ -2,6 +2,7 @@ import solaris as sol
 from solaris.data import data_dir
 import os
 from joblib import Parallel, delayed
+from tqdm import tqdm
 import pandas as pd
 import geopandas as gpd
 from PIL import Image
@@ -34,13 +35,13 @@ def parse_create_mask(image_id):
     fbc_mask = sol.vector.mask.df_to_px_mask(df=gdf,
                                              channels=['footprint'],
                                              reference_im=str(image_filepath),
-                                             boundary_width=5, contact_spacing=10, meters=True, burn_value=1)
+                                             burn_value=1)
     Image.fromarray(fbc_mask.squeeze()).save(output_filepath)
 
 
 if __name__ == "__main__":
-    for image_id in image_ids:
-        print(image_id)
+    for image_id in tqdm(image_ids):
+        # print(image_id)
         parse_create_mask(image_id)
     #
     # Parallel(n_jobs=12)(delayed(parse_create_mask)(image_id) for

@@ -21,18 +21,21 @@ class SatelliteSegmentationDataset(Dataset):
         mask_filepath = self.mask_dir / f"mask_{image_id}.png"
         img = io.imread(image_filepath, plugin='tifffile')
         # rescale tifffile
-        img = (img - img.min())/(img.max() - img.min())#.astype(np.float32)
-        mask = np.asarray(Image.open(mask_filepath))
+        img = (img - img.min())/(img.max() - img.min()).copy().astype(np.float32)
+        mask = io.imread(mask_filepath).copy().astype(np.float32)
+        # mask = np.asarray(Image.open(mask_filepath))
 
+        # apply preprocessing for smp
+        if self.preprocessing:
+            preprocesed = self.preprocessing(image=img, mask=mask)
+            img, mask = preprocesed['image'], preprocesed['mask']
 
         if self.transform:
             augmentation = self.transform(image=img, mask=mask)
             img = augmentation['image']
             mask = augmentation['mask']
-        # apply preprocessing for smp
-        if self.preprocessing:
-            preprocesed = self.preprocessing(image=img, mask=mask)
-            img, mask = preprocesed['image'], preprocesed['mask']
+
+
 
         sample = {"image": img, "mask": mask}
         return sample

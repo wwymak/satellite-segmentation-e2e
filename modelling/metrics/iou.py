@@ -16,9 +16,7 @@ class IoU(Metric):
 
     def update(self, output):
         y_pred, y = output
-        print(y_pred.shape, y.shape)
         batch_iou = smp.utils.metrics.IoU()(y_pred.squeeze(), y.squeeze())
-        print(batch_iou, 'batch)iou')
         self.sum_iou += batch_iou
         self.batch_count +=1
         # ... your custom implementation to update internal state on after a single iteration
