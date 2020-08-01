@@ -56,18 +56,12 @@ train_transforms = get_train_augmentation()
 val_transforms = get_validation_augmentation()
 
 
-train_loader, val_loader, train_eval_loader = get_train_val_loaders(
-    image_dir=image_dir,
-    mask_dir=mask_dir,
-    summary_data_filepath=summary_data_filepath,
-    train_transforms=get_train_augmentation(),
-    val_transforms=get_validation_augmentation(),
-    train_ratio=0.8,
-    batch_size=batch_size,
-    num_workers=num_workers,
-    limit_train_num_samples=100 if debug else None,
-    limit_val_num_samples=100 if debug else None,
-)
+train_loader, val_loader, train_eval_loader = get_train_val_loaders(summary_data_filepath=summary_data_filepath,
+                                                                    train_transforms=get_train_augmentation(),
+                                                                    val_transforms=get_validation_augmentation(),
+                                                                    batch_size=batch_size, num_workers=num_workers,
+                                                                    limit_train_num_samples=100 if debug else None,
+                                                                    limit_val_num_samples=100 if debug else None)
 
 prepare_batch = prepare_batch_fp32
 

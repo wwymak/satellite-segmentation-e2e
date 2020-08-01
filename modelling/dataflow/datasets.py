@@ -7,18 +7,16 @@ from fastcore.utils import *
 import numpy as np
 
 class SatelliteSegmentationDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, image_id_list, transform=None,preprocessing=None):
+    def __init__(self, image_filepath_list, mask_filepath_list, transform=None,preprocessing=None):
         super().__init__()
-        self.image_dir = image_dir
-        self.mask_dir = mask_dir
-        self.image_id_list = image_id_list
+        self.image_filepath_list = image_filepath_list
+        self.mask_filepath_list = mask_filepath_list
         self.transform = transform
         self.preprocessing = preprocessing
 
     def __getitem__(self, index):
-        image_id = self.image_id_list[index]
-        image_filepath = self.image_dir / f"RGB-PanSharpen_{image_id}.tif"
-        mask_filepath = self.mask_dir / f"mask_{image_id}.png"
+        image_filepath = self.image_filepath_list[index]
+        mask_filepath = self.mask_filepath_list[index]
         img = io.imread(image_filepath, plugin='tifffile')
         # rescale tifffile
         img = (img - img.min())/(img.max() - img.min()).copy().astype(np.float32)
@@ -41,4 +39,4 @@ class SatelliteSegmentationDataset(Dataset):
         return sample
 
     def __len__(self):
-        return len(self.image_id_list)
+        return len(self.image_filepath_list)
