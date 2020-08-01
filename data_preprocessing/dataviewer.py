@@ -18,20 +18,16 @@ import dask.array as da
 from glob import glob
 
 
-data_dir = Path('/media/wwymak/Storage/spacenet/AOI_3_Paris_Train')
-masks_dir = data_dir / 'masks'
+data_dir = Path('/media/wwymak/Storage/spacenet')
+tilesets_dir = list(data_dir.glob("*Train"))
+masks_dir = [x / 'masks' for x in tilesets_dir]
+image_dir = [x / 'RGB-PanSharpen' for x in tilesets_dir]
+label_dir = [x / 'geojson' / 'buildings' for x in tilesets_dir]
+summary_df = pd.read_csv(data_dir / 'summary_ids.csv')
+image_ids = summary_df.image_id.unique()
 
-image_dir = data_dir / 'RGB-PanSharpen'
-label_dir = data_dir / 'geojson' /'buildings'
-summary_df = pd.read_csv(data_dir / 'summaryData' / 'AOI_3_Paris_Train_Building_Solutions.csv')
-image_ids = summary_df.ImageId.unique()
-image_filenames = [f"RGB-PanSharpen_{image_id}.tif" for image_id in image_ids]
-mask_filenames = [f"mask_{image_id}.png" for image_id in image_ids]
-label_filenames = [f"buildings_{image_id}.geojson" for image_id in image_ids]
-image_filepaths = [image_dir /x for x in image_filenames]
-
-label_filepaths = [label_dir /x for x in label_filenames]
-mask_filepaths = [masks_dir /x for x in mask_filenames]
+image_filepaths = summary_df.image_filepath
+mask_filepaths = summary_df.mask_filepath
 
 def read_tiffile(filepath):
     image = io.imread(filepath)
