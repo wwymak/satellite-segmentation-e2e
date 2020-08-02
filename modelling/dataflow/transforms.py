@@ -12,7 +12,7 @@ class ToTensorCustom(ToTensorV2):
     def apply_to_mask(self, mask, **params):  # skipcq: PYL-W0613
         return mask_to_tensor(mask, num_classes=params.get('num_classes', 1), sigmoid=params.get('sigmoid'))
 
-def get_train_augmentation(image_size=256, is_display=False):
+def get_train_augmentation(image_size=256, is_display=False, normalisation_fn=None):
     # max_image_size = min(max_image_size, image_size * 2)
     # transform = albu.Compose([
     #     # A.ToFloat(max_value=65535.0),
@@ -37,14 +37,14 @@ def get_train_augmentation(image_size=256, is_display=False):
     transform_list = [
         resize_transforms(image_size),
         hard_transforms(),
-        post_transforms()
+        post_transforms(normalisation_fn)
     ]
     if is_display:
         transform_list = transform_list[:-1]
     transform = compose(transform_list)
     return transform
 
-def get_validation_augmentation(image_size=256, is_display=False):
+def get_validation_augmentation(image_size=256, is_display=False, normalisation_fn=None):
     """Add paddings to make image shape divisible by 32"""
     # test_transform = [
     #     albu.ToFloat(max_value=1.0),
@@ -53,7 +53,7 @@ def get_validation_augmentation(image_size=256, is_display=False):
     #     ToTensorV2(),
     # ]
     transform_list = [
-        pre_transforms(image_size), post_transforms()
+        pre_transforms(image_size), post_transforms(normalisation_fn)
     ]
     if is_display:
         transform_list = transform_list[:-1]
@@ -119,7 +119,7 @@ def hard_transforms():
     return result
 
 
-def resize_transforms(image_size=224):
+def resize_transforms(image_size=256):
     BORDER_CONSTANT = 0
     pre_size = int(image_size * 1.5)
 
@@ -153,10 +153,13 @@ def resize_transforms(image_size=224):
     return result
 
 
-def post_transforms():
+def post_transforms(normalization_fn=None):
     # we use ImageNet image normalization
     # and convert it to torch.Tensor
-    return [albu.Normalize(max_pixel_value=1.), ToTensorCustom()]
+    if not normalization_fn:
+        normalization_fn = albu.Normalize(max_pixel_value=1.)
+
+    return [normalization_fn, ToTensorCustom()]
 
 
 def compose(transforms_to_compose):

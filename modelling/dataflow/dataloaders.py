@@ -63,12 +63,12 @@ def get_train_val_loaders(
         val_ds = Subset(val_ds, val_indices)
 
     # random samples for evaluation on training dataset
-    if len(val_ds) < len(train_ds):
-        np.random.seed(len(val_ds))
-        train_eval_indices = np.random.permutation(len(train_ds))[: len(val_ds)]
-        test_ds = Subset(train_ds, train_eval_indices)
-    else:
-        test_ds = test_ds
+    # if len(val_ds) < len(train_ds):
+    #     np.random.seed(len(val_ds))
+    #     train_eval_indices = np.random.permutation(len(train_ds))[: len(val_ds)]
+    #     test_ds = Subset(train_ds, train_eval_indices)
+    # else:
+    #     test_ds = test_ds
 
     train_loader = DataLoader(
         train_ds, shuffle=True, batch_size=batch_size, num_workers=num_workers,
