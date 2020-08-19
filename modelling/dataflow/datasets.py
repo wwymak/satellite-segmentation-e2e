@@ -19,7 +19,8 @@ class SatelliteSegmentationDataset(Dataset):
         mask_filepath = self.mask_filepath_list[index]
         img = io.imread(image_filepath, plugin='tifffile')
         # rescale tifffile
-        img = (img - img.min())/(img.max() - img.min()).copy().astype(np.float32)
+        if img.max() > img.min():
+            img = (img - img.min())/(img.max() - img.min()).copy().astype(np.float32)
         mask = io.imread(mask_filepath).copy().astype(np.float32)
         # mask = np.asarray(Image.open(mask_filepath))
 
